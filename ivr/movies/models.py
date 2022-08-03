@@ -1,7 +1,5 @@
 from django.db import models
 
-# First create three models, Theater and Movies include digits attr for choosing the movie on IVR Menu
-
 
 class Theater(models.Model):
     class Meta:
@@ -29,4 +27,4 @@ class Show(models.Model):
 
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     theater = models.ForeignKey(Theater, on_delete=models.CASCADE)
-    start_at = models.DateTimeField()
+    starts_at = models.DateTimeField()

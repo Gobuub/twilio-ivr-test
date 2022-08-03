@@ -1,8 +1,6 @@
-from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from twilio.twiml.voice_response import VoiceResponse
-# Create your views here.
 
 # First we will create a new view that accepts an HttpRequest object and returns an HttpResponse
 

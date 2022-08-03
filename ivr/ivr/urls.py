@@ -15,12 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-import os
-
-print (os.getcwd())
-
 
 from movies.urls import urlpatterns as mov_urlpatterns
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
