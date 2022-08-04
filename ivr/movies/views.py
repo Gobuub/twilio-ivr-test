@@ -11,7 +11,7 @@ from django.utils import timezone
 request_validator = RequestValidator(settings.TWILIO_AUTH_TOKEN)
 
 
-'''def validate_django_request(request: HttpRequest) -> object:
+def validate_django_request(request: HttpRequest) -> object:
     try:
         signature = request.META['HTTP_X_TWILIO_SIGNATURE']
     except KeyError:
@@ -24,14 +24,14 @@ request_validator = RequestValidator(settings.TWILIO_AUTH_TOKEN)
         )
     if not is_valid_twilio_request:
         raise SuspiciousOperation()
-'''
+
 # First we will create a new view that accepts an HttpRequest object and returns an HttpResponse
 
 
 @csrf_exempt
 # we use the csrf decorator to disabled Django´s CSRF protection, without this we can't use twilio on our website
 def choose_theater(request: HttpRequest) -> HttpResponse:
-    # validate_django_request(request)
+    validate_django_request(request)
     vr = VoiceResponse()
     vr.say('Bienvenido a tu guía personal de cines', language='es')
 
