@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from twilio.twiml.voice_response import VoiceResponse
+from django.urls import reverse
 
 from .models import Theater, Movie, Show
 import datetime
@@ -15,15 +16,13 @@ def choose_theater(request: HttpRequest) -> HttpResponse:
     vr.say('Bienvenido a tu guía personal de cines', language='es')
 
     with vr.gather(
-        action=reversed('choose-movie'),
+        action=reverse('choose-movie'),
         finish_on_key='#',
         timeout=20,
     ) as gather:
-        gather.say('Por favor elige una película y presiona #', language='es')
+        gather.say('Por favor elige un cine y presione #', language='es')
         theaters = (
-            Theater.objects
-            .filter(digits__isnull = False)
-            .order_by('digits')
+            Theater.objects.filter(digits__isnull=False).order_by('digits')
         )
         for theater in theaters:
             gather.say(f'Para {theater.name} en {theater.address} presiona {theater.digits}',
@@ -43,31 +42,30 @@ def choose_movie(request: HttpRequest) -> HttpResponse:
     try:
         theater = Theater.objects.get(digits=digits)
 
-    except Theater.DoesNotExist:
-        vr.say('Por favor seleccione un cine de la lista', language='es')
-        vr.redirect(reversed('choose-theater'))
+    except Theater.DoesNotExit:
+        vr.say('Por favor seleccione un cine de la lista.', language='es')
+        vr.redirect(reverse('choose-theater'))
     else:
         with vr.gather(
-            action=f'{reversed("list-showtimes")}?theater={theater.id}',
+            action=f'{reverse("list-showtimes")}?theater={theater.id}',
             finish_on_key='#',
             timeout=20,
         ) as gather:
             gather.say('Por favor elige una película y pulsa #', language='es')
             movies = (
-                Movie.objects
-                .filter(digits__isnull=False)
-                .order_by('digits')
+                Movie.objects.filter(digits__isnull=False).order_by('digits')
                 )
             for movie in movies:
                 gather.say(f'Para {movie.title} presiona {movie.digits}', language='es')
 
         vr.say('No he recibido su elección', language='es')
-        vr.redirect(reversed('choose-theater'))
+        vr.redirect(reverse('choose-theater'))
 
     return HttpResponse(str(vr), content_type='text/xml')
 
+
 @csrf_exempt
-def list_showtimes(request: HttpRequest) -> HttpResponse:
+def list_shows(request: HttpRequest) -> HttpResponse:
     vr = VoiceResponse()
 
     digits = request.POST.get('Digits')
@@ -78,7 +76,7 @@ def list_showtimes(request: HttpRequest) -> HttpResponse:
 
     except Movie.DoesNotExit:
         vr.say('Por favor, elige una película de la lista', language='es')
-        vr.redirect(f'{reversed("choose-movie")}?theater={theather.id}')
+        vr.redirect(f'{reverse("choose-movie")}?theater={theather.id}')
 
     else:
 
