@@ -8,7 +8,7 @@ from twilio.request_validator import RequestValidator
 from .models import Theater, Movie, Show
 import datetime
 from django.utils import timezone
-request_validator = RequestValidator(settings.TWILIO_AUTH_TOKEN)
+'''request_validator = RequestValidator(settings.TWILIO_AUTH_TOKEN)
 
 
 def validate_django_request(request: HttpRequest) -> object:
@@ -23,7 +23,7 @@ def validate_django_request(request: HttpRequest) -> object:
             params=request.POST,
         )
     if not is_valid_twilio_request:
-        raise SuspiciousOperation()
+        raise SuspiciousOperation()'''
 
 # First we will create a new view that accepts an HttpRequest object and returns an HttpResponse
 
@@ -31,7 +31,7 @@ def validate_django_request(request: HttpRequest) -> object:
 @csrf_exempt
 # we use the csrf decorator to disabled Django´s CSRF protection, without this we can't use twilio on our website
 def choose_theater(request: HttpRequest) -> HttpResponse:
-    validate_django_request(request)
+    # validate_django_request(request)
     vr = VoiceResponse()
     vr.say('Bienvenido a tu guía personal de cines', language='es')
 
@@ -67,7 +67,7 @@ def choose_movie(request: HttpRequest) -> HttpResponse:
         vr.redirect(reverse('choose-theater'))
     else:
         with vr.gather(
-            action=f'{reverse("list-showtimes")}?theater={theater.id}',
+            action=f'{reverse("list-shows")}?theater={theater.id}',
             finish_on_key='#',
             timeout=20,
         ) as gather:
